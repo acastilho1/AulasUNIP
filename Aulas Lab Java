@@ -33,6 +33,12 @@ public class Paridade {
         });
         
         
+        
+        frame.add(label);
+        frame.add(textField);
+        frame.add(b1);
+        frame.add(texto);
+        
         frame.setSize(500, 150);
         frame.setVisible(true);
         
