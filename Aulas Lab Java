@@ -1,0 +1,50 @@
+
+package paridade;
+import java.awt.*;
+import java.awt.event.*;
+
+
+public class Paridade {
+    public static void main(String[] args) {
+        
+        Frame frame = new Frame("Teste de paridade");
+        frame.setLayout(new GridLayout(5,2));
+        
+        Label label = new Label("digite um numero inteiro");
+        TextField textField = new TextField();
+        Label texto = new Label("");
+        
+        Button b1 = new Button("Teste de paridade:");
+        
+        b1.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                try{
+                    int teste = Integer.parseInt(String.valueOf(textField.getText()));
+                    if(teste % 2 == 0){
+                        texto.setText("É um numero par.");
+                    }
+                    else{
+                        texto.setText("é um numero impar");
+                    }
+                }catch(NumberFormatException ex){
+                    texto.setText("Entrada invalida");
+                }
+            }
+        });
+        
+        
+        frame.setSize(500, 150);
+        frame.setVisible(true);
+        
+        
+        
+        frame.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                frame.dispose();
+                System.exit(0);
+            }
+        });
+    }
+}
+
+
