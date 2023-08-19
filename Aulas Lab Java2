@@ -5,7 +5,7 @@ import java.awt.event.*;
 public class Calculator {
     public static void main(String[] args){
         Frame frame = new Frame("Somas");
-        frame.setLayout(new GridLayout(5, 2));
+        
         
         frame.setSize(300, 200);
         frame.setVisible(true);
@@ -37,10 +37,29 @@ public class Calculator {
         
         });
         
-        frame.add(BotaoSoma);
-        frame.add(textField1);
-        frame.add(textField2);
-        frame.add(resultField);
+        frame.setLayout(new FlowLayout());
+        
+        
+        Panel inputPanel = new Panel();
+        inputPanel.setLayout(new GridLayout(2,2));
+        inputPanel.add(new Label("Numero 1:"));
+        inputPanel.add(textField1);
+        inputPanel.add(new Label("Numero 2:"));
+        inputPanel.add(textField2);
+        
+        
+        Panel resultPanel = new Panel();
+        resultPanel.setLayout(new GridLayout(1, 2));
+        resultPanel.add(new Label("Resultado: "));
+        resultPanel.add(resultField);
+        
+        Panel buttonPanel = new Panel();
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(BotaoSoma);
+        
+        frame.add(inputPanel);
+        frame.add(resultPanel);
+        frame.add(buttonPanel);
         
         frame.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
