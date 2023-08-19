@@ -1,0 +1,52 @@
+package paridade;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Calculator {
+    public static void main(String[] args){
+        Frame frame = new Frame("Somas");
+        frame.setLayout(new GridLayout(5, 2));
+        
+        frame.setSize(300, 200);
+        frame.setVisible(true);
+     
+        
+        TextField textField1, textField2, resultField;
+        
+        
+        Button BotaoSoma = new Button("Soma");
+        
+        textField1 = new TextField(10);
+        textField2 = new TextField(10);
+        resultField = new TextField(10);
+        resultField.setEditable(false);
+        
+        BotaoSoma.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                try{
+                    double num1 = Double.parseDouble(textField1.getText());
+                    double num2 = Double.parseDouble(textField2.getText());
+                    double result = num1 + num2;
+                    
+                    resultField.setText(Double.toString(result));
+                
+                }catch(NumberFormatException ex){
+                    resultField.setText("Entrada invalida");
+                }
+            }
+        
+        });
+        
+        frame.add(BotaoSoma);
+        frame.add(textField1);
+        frame.add(textField2);
+        frame.add(resultField);
+        
+        frame.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                frame.dispose();
+                System.exit(0);
+            }
+        });
+    }
+}
