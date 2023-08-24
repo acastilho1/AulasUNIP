@@ -7,7 +7,7 @@ Possivel cair na prova
 psql -h localhost -p 5432 -d LBD -U postgres -W
 
 
-
+https://www.fuvest.br/analista-sistemas/
 
 /////////////////////////////////////////////////////////////////////////////
 CREATE TABLE tb_cliente(
