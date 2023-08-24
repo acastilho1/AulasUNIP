@@ -233,4 +233,23 @@ SELECT current_user;
 SELECT inet_client_addr(); 
 
 
+select *
+from tb_item;
+
+
+SELECT cidade, sobrenome
+FROM tb_cliente;
+
+
+
+SELECT cidade "Cidade do Cliente",
+	sobrenome "Sobrenome do Cliente"
+FROM tb_cliente
+ORDER BY cidade DESC, sobrenome ASC;
+
+SELECT cidade "Cidade do Cliente",
+	sobrenome "Sobrenome do Cliente"
+FROM tb_cliente
+ORDER BY  1 DESC,  2 ASC;
+
 
