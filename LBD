@@ -101,7 +101,7 @@ VALUES
  (5, 'Sr', 'Vitor', 'Silva', 'Entrada Aguá Chata', 's/n', 'Rodovia 356', '07251 000', 'Guarulhos',
  'SP', '4343 6712', '831 4311', 1),
  
- (6, 'Sr', 'Claudinei', 'Safra', 'Avenida José Osvaldo Marques', '1562', NULL, '14173 010', 'Sertãozinha',
+ (6, 'Sr', 'Claudinei', 'Safra', 'Avenida José Osvaldo Marques', '1562', NULL, '14173 010', 'Sertãozinho',
  'SP', '3698 8100', '8131 6409', 1),
  
  (7, 'Sr', 'Ricardo', 'Ferreira', 'Alameda Assunta Barizani Tienghi', '88', NULL, '18046 705', 'Sorocaba',
@@ -252,4 +252,49 @@ SELECT cidade "Cidade do Cliente",
 FROM tb_cliente
 ORDER BY  1 DESC,  2 ASC;
 
+
+SELECT sobrenome
+FROM tb_cliente
+ORDER BY 1;
+
+SELECT DISTINCT (sobrenome)
+FROM tb_cliente
+ORDER BY 1;
+
+
+SELECT ds_item, preco_custo
+FROM tb_item
+ORDER BY 1;
+
+
+
+SELECT ds_item, preco_custo,
+	preco_custo*100 AS RESULTADO
+FROM tb_item
+ORDER BY 1;
+
+
+SELECT ds_item, preco_custo,
+	CAST((preco_custo * 100)AS INT) AS "Preço de Custo"
+FROM tb_item
+ORDER BY 1;
+
+
+SELECT sobrenome AS "Sobrenome do Cliente",
+	cidade AS "Cidade do Cliente"
+FROM tb_cliente
+WHERE cidade = 'São Paulo';
+
+
+
+SELECT sobrenome AS "Sobrenome do Cliente",
+	cidade AS "Cidade do Cliente"
+FROM tb_cliente
+WHERE titulo <> 'Sra'
+AND (cidade = 'Sertãozinho' OR cidade = 'São Paulo');
+
+SELECT sobrenome AS "Sobrenome do Cliente",
+	cidade AS "Cidade do Cliente"
+FROM tb_cliente tc 
+WHERE cidade IN('São Paulo', 'Sorocaba');
 
