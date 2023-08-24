@@ -224,4 +224,13 @@ VALUES
 (10,1);
 
 
+SELECT inet_server_port(); 
+
+SELECT current_database(); 
+
+SELECT current_user;
+
+SELECT inet_client_addr(); 
+
+
 
