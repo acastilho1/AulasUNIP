@@ -322,6 +322,63 @@ where nome like '____'
 
 select id_cliente, nome
 from tb_cliente
-where nome  Ilike '_A%'
+where nome  Ilike 'A%'
+
+select id_cliente, nome
+from tb_cliente
+limit 5;
+
+select id_cliente, nome
+from tb_cliente
+limit 8 offset 2;
+
+select id_cliente, nome
+from tb_cliente
+offset 12;
+
+create table tb_teste(
+coluna_a INTEGER
+);
+
+insert into tb_teste
+values
+(0), (1), (null);
+
+select *
+from tb_teste
+where coluna_a is null;
+
+select *
+from tb_teste
+where coluna_a is not null;
+
+
+select cast ('30/08/2023' as date);
+
+select cast('30/08/2023' as timestamp);
+
+select *
+from tb_pedido
+where date_part('month', dt_compra)= 9; 
+
+
+select *
+from tb_pedido
+where dt_compra >= cast('2013 07 21' as date);
+
+select now(), current_timestamp;
+
+select dt_entrega - dt_compra as intervalo
+from tb_pedido;
+
+select id_cliente
+from tb_cliente
+where nome = 'Anna' and sobrenome = 'Kelly';
+
+
+select *
+from tb_pedido
+where id_cliente = 8;
+
 
 
