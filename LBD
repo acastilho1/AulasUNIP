@@ -380,5 +380,10 @@ select *
 from tb_pedido
 where id_cliente = 8;
 
+select tb_cliente.nome, tb_pedido.dt_compra 
+from tb_cliente, tb_pedido
+where tb_cliente.id_cliente = tb_pedido.id_cliente
+and tb_cliente.id_cliente = 8;
 
+s
 
