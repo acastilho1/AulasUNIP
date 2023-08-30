@@ -295,6 +295,33 @@ AND (cidade = 'Sertãozinho' OR cidade = 'São Paulo');
 
 SELECT sobrenome AS "Sobrenome do Cliente",
 	cidade AS "Cidade do Cliente"
-FROM tb_cliente tc 
+FROM tb_cliente
 WHERE cidade IN('São Paulo', 'Sorocaba');
+
+
+select id_cliente, nome
+from tb_cliente
+where id_cliente between 5 and 9;
+
+select id_cliente, nome
+from tb_cliente
+where nome between 'A' and 'D';
+
+select id_cliente, nome
+from tb_cliente
+where nome like 'R%';
+
+select id_cliente , nome
+from tb_cliente
+where nome like '%e'
+
+
+select id_cliente , nome
+from tb_cliente
+where nome like '____'
+
+select id_cliente, nome
+from tb_cliente
+where nome  Ilike '_A%'
+
 
