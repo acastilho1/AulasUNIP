@@ -237,6 +237,133 @@ VALUES
 (10,1);
 
 
+select *
+from tb_cliente
+
+insert into tb_cliente 
+values
+(16, 'Sr', 'Sidney', 'Magal', 'Rua Teste', '71', null, '13400 500', 'Cravinhos', 'SP', '4939 2386', '8092 6832', 1),
+(17, 'Sra', 'Joana', 'D''arc', 'Rua Aurora', '10', null, '40013 890', 'Ourinhos', 'SP', '4939 2386', '8092 6832', 1);
+
+
+insert into tb_cliente (id_cliente, titulo, nome, sobrenome, endereco, numero, cep, cidade, estado, fone_fixo, fone_movel, fg_ativo)
+values
+(18, 'Sra', 'Sarah', 'Martins', 'Rua Piracicaba', 's/n', '40013 890', 'Mococa', 'SP', '3922 7622', '9876 2132', 1);
+
+
+insert into tb_cliente(id_cliente, titulo, sobrenome, nome, endereco, numero, cep, cidade, estado, fone_fixo, fone_movel, fg_ativo)
+values
+(19, 'Sra', 'Nome_19', 'Sobrenome_19', 'Endereco 19', '19', '19191 191', 'Cidade 19', 'SP', '1919 1919', '91919 1919', 1),
+(20, 'Sra', 'Nome_20', 'Sobrenome_20', 'Endereco 20', '20', '20202 202', 'Cidade 20', 'SP', '2020 2020', '20202 2020', 1);
+
+
+create sequence sq_teste
+minvalue 1
+increment 1
+start 1
+no cycle;
+
+create table tb_pratica_sequencia(
+	coluna_a INTEGER default NEXTVAL('sq_teste'),
+	coluna_b VARCHAR,
+	coluna_c VARCHAR,
+	primary key(coluna_a));
+	
+insert into tb_pratica_sequencia(coluna_a, coluna_b, coluna_c)
+values
+(1, 'Exemplo A', 'Exemplo A'),
+(2, 'Exemplo B', 'Exemplo B'),
+(3, 'Exemplo C', 'Exemplo C');
+
+insert into tb_pratica_sequencia(coluna_b, coluna_c)
+values
+('Exemplo D', 'Exemplo D'),
+('Exemplo E', 'Exemplo E'),
+('Exemplo F', 'Exemplo F');
+
+SELECT CURRVAL('sq_teste');
+
+select *
+from sq_teste;
+
+SELECT NEXTVAL('sq_teste');
+
+SELECT SETVAL('sq_teste', 100);
+
+insert into tb_pratica_sequencia(coluna_a, coluna_b, coluna_c)
+values
+(DEFAULT, 'Exemplo D', 'Exemplo D');
+
+select *
+from tb_pratica_sequencia
+
+insert into tb_cliente (id_cliente, titulo, nome, sobrenome, endereco, numero, cep, complemento, cidade, estado, fone_fixo, fone_movel, fg_ativo)
+values
+(21,'Sr', 'Teste NULL', 'Silva', 'Rua Teste NULL', 's/n', '40013 890', NULL, 'Cajuru', 'SP', '3922 7622', '9876 2132', 1);
+
+
+insert into tb_cliente (id_cliente, titulo, nome, sobrenome, endereco, numero, cep, cidade, estado, fone_fixo, fone_movel, fg_ativo)
+values
+(22, 'Sr', 'Teste NULL', 'Silva', 'Rua Teste NULL', 's/n', '40013 890', 'Lins', 'SP', '3344 8899', '99163 3221', 1);
+
+
+
+CREATE TABLE tb_valor_nulo(
+	id 		SERIAL,
+	ds_a	VARCHAR CONSTRAINT nn_ds_a NOT NULL,
+	ds_b	VARCHAR NULL,
+	PRIMARY KEY(id));
+	
+
+COPY tb_cliente
+FROM 'C:\temp\cliente.txt'
+using delimiters ';';
+
+CREATE TABLE tb_backup_cliente(
+	id_cliente 		INTEGER,
+	titulo			CHAR(4),
+	nome  			VARCHAR(32) NOT NULL,
+	sobrenome		VARCHAR(32) NOT NULL,
+	endereco 		VARCHAR(62) NOT NULL,
+	numero			VARCHAR(5) NOT NULL,
+	complemento 	VARCHAR(62),
+	cep 			VARCHAR(10),
+	cidade			VARCHAR(62) NOT NULL,
+	estado 			CHAR(2) NOT NULL,
+	fone_fixo		VARCHAR(15) NOT NULL,
+	fone_movel		VARCHAR(15) NOT NULL,
+	fg_ativo		INTEGER,
+	PRIMARY KEY(id_cliente));
+
+INSERT INTO tb_backup_cliente
+SELECT *
+FROM tb_cliente 
+WHERE nome IS NOT NULL;
+
+CREATE TABLE tb_bkp_pedido AS
+SELECT *
+FROM tb_pedido;
+
+SELECT *
+FROM tb_bkp_pedido;
+
+UPDATE tb_cliente
+	SET titulo = 'Sra',
+	nome = 'Marta'
+WHERE id_cliente = 21;
+
+UPDATE tb_backup_cliente
+	SET fg_ativo = 99;
+
+UPDATE tb_backup_cliente 
+	SET nome = tb_cliente.nome 
+FROM tb_cliente
+WHERE tb_cliente.id_cliente = 9
+AND tb_backup_cliente.id_cliente = 10;
+
+DELETE
+FROM tb_backup_cliente
+
 SELECT inet_server_port(); 
 
 SELECT current_database(); 
