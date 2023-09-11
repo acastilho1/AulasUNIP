@@ -145,5 +145,60 @@ values
 
 
 
+select l.isbn, l.titulo, ed.razao_social, cat.ds_categoria, a.nm_autor, l.preco
+from tb_livros l
+inner join tb_editoras ed on l.id_editora = ed.id_editora
+inner join tb_categorias cat on l.id_categoria = cat.id_categoria
+inner join tb_autores a on l.id_autor = a.id_autor
+where l.fg_ativo = 1
+order by l.titulo;
 
 
+select tc.ds_categoria, count(tl.id_livro) as qtd_livro
+from tb_livros tl
+inner join tb_categorias tc on tl.id_categoria = tc.id_categoria 
+where tl.fg_ativo = 1
+group by tc.ds_categoria
+
+ 
+select sum(tl.preco)
+from tb_livros tl 
+inner join tb_categorias tc on tl.id_categoria = tc.id_categoria
+where tc.ds_categoria <> 'AUTO AJUDA' and tl.fg_ativo = 1;
+
+
+select sum(tl.preco)
+from tb_livros tl 
+inner join tb_categorias tc on tl.id_categoria = tc.id_categoria
+where tc.id_categoria in (select id_categoria from tb_categorias where ds_categoria <> 'AUTO AJUDA') and tl.fg_ativo = 1;
+
+
+select tl.isbn, tl.titulo, te.id_editora, tl.preco
+from tb_livros tl 
+inner join tb_editoras te on tl.id_editora = te.id_editora 
+where tl.preco not between 35.00 and 80.00 and tl.fg_ativo = 1;
+
+select tl.isbn, tl.titulo, te.razao_social , tc.ds_categoria, ta.nm_autor, tl.preco
+from tb_livros tl
+inner join tb_editoras te on tl.id_editora = te.id_editora 
+inner join tb_categorias tc on tl.id_categoria = tc.id_categoria
+inner join tb_autores ta on tl.id_autor = ta.id_autor
+where tc.id_categoria not in (select id_categoria from tb_categorias where ds_categoria = 'DIREITO' or ds_categoria = 'INFORMÁTICA') and tl.fg_ativo = 1;
+
+create table tb_usuarios(
+	user_name			VARCHAR(25),
+	nm_usuario			VARCHAR(60),
+	password			VARCHAR(30),
+	fg_ativo			INTEGER,
+	constraint pk_usuarios_user_name primary key(user_name));
+
+insert into tb_usuarios(user_name, nm_usuario, password, fg_ativo)
+values 
+('Casty', 'Arthur Castilho', MD5('çenha_dificil'), 1);
+
+alter table tb_usuarios
+alter column password type VARCHAR(50);
+
+insert into tb_usuarios(user_name, nm_usuario, password, fg_ativo)
+values 
+('bless', 'Giovani Castilho', MD5('çenha_mto_dificil'), 1);
