@@ -1,0 +1,67 @@
+create table tb_pedido(
+	id_pedido		integer,
+	primary key(id_pedido));
+
+create table tb_item_pedido(
+	id_item			smallint,
+	id_pedido		smallint,
+	quantidade 		integer,
+	primary key(id_item, id_pedido));
+	
+
+alter table tb_item_pedido
+add foreign key(id_pedido)
+	references tb_pedido(id_pedido);
+	
+
+select *
+from pg_constraint
+where confrelid = 'tb_pedido'
+
+--gerar um relatorio que apresente o nome do empregado, juntamente com o nome do seu respectivo gerente
+
+
+--exemplo  saida:
+
+--Andre Leonardo trabalha para Gabriel Zacarias
+
+--(1) criaçao do objeto tb_empregado
+-- essa tabela tera um auto relacionamento
+
+create table tb_empregado(
+	id_empregado		INTEGER,
+	nm_empregado		VARCHAR(60),
+	salario				NUMERIC(7,2),
+	id_gerente			INTEGER,
+	constraint pk_tb_empregado_id_empregado primary key(id_empregado),
+	constraint fk_tb_empegado_id_empregado foreign key(id_gerente)
+		references tb_empregado(id_empregado)
+);
+
+--(2)realizando uma carga de dados na tb_empregado
+
+select *
+from tb_empregado;
+
+insert into tb_empregado(id_empregado, id_gerente, nm_empregado, salario)
+
+values
+(100, null, 'KAUA HENRIQUE', 24000.00),
+(110, 100, 'GERALDO HENRIQUE NETO', 7500.00),
+(120, 100, 'ANDRE LEONARDO', 8200.00),
+(130, 120, 'IGOR DAVI', 5100.00),
+(140, 110, 'JULIA PRADO', 3200.00);
+
+
+select e.nm_empregado || 'trabalha para' || g.nm_empregado "Quem é o gerente de quem?"
+from tb_empregado e
+inner join tb_empregado g on (e.id_gerente = g.id_empregado);
+
+-- relatorio(2)
+-- incluindo o CEO (KAUA HENRIQUE) no relatoio 
+-- atraves de uma junlao externa que preserva
+-- as tuplas de uma deteminada tabela(esquerdo/direito)
+
+select e.nm_empregado || ' trabalha para ' || coalesce (g.nm_empregado, ' os acionistas') "quem trabalha para quem"
+from tb_empregado e
+left outer join tb_empregado g on (e.id_gerente = g.id_empregado);
