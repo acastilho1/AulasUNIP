@@ -686,3 +686,15 @@ from tb_item;
 
 create tablespace tablespace_01
 location 'C://tablespace_postgresql';
+
+create table tb_teste_tablespace(
+	col_a 			INTEGER
+)tablespace tablespace_01;
+
+insert into tb_teste_tablespace
+
+values
+(generate_series(1, 1000));
+
+select *
+from tb_teste_tablespace;
