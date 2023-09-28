@@ -577,3 +577,102 @@ inner join tb_item_pedido ip on p.id_pedido = ip.id_pedido
 inner join tb_item i on ip.id_item = i.id_item 
 where c.nome = 'Anna' and c.sobrenome = 'Kelly';
 
+select nm_pessoa, COUNT(1)
+from tb_pessoas 
+group by nm_pessoa
+having count(1) > 1;
+
+select count(distinct sobrenome) as sobrenome_unicos, count(sobrenome) as sobrenomes_com_duplicidade
+from tb_cliente;
+
+select ds_item, preco_custo 
+from tb_item
+where preco_custo = (select MIN(preco_custo) from tb_item)
+
+select max(preco_venda) as "Maior Valor"
+from tb_item;
+
+select sum(preco_venda)
+from tb_item
+
+select AVG(preco_venda) as "Media"
+from tb_item;
+
+select cast(AVG(preco_venda) as numeric(7,2)) as "Media"
+from tb_item;
+
+
+select *
+from tb_item
+where preco_custo > (select AVG(preco_custo) from tb_item);
+
+
+select *
+from tb_item
+where preco_custo >(select AVG(preco_custo) from tb_item)
+and preco_venda < (select AVG(preco_venda) from tb_item);
+
+select p.dt_compra
+from tb_pedido p
+where p.id_cliente = (select c.id_cliente
+				from tb_cliente c 
+				where c.id_cliente = p.id_cliente 
+				and nome = 'Alex');
+			
+		
+select *
+from tb_pedido p, (select * 
+				from tb_cliente
+				where nome = 'Anna') c
+where c.id_cliente = p.id_cliente
+
+
+select nome, sobrenome
+from tb_cliente c
+where exists(select 1
+			from tb_pedido p
+			where p.id_cliente = c.id_cliente);
+			
+
+
+create table tb_parte(
+	id_parte			INTEGER,
+	descricao			VARCHAR(32),
+	id_parte_principal	INTEGER,
+	primary key(id_parte),
+	foreign key(id_parte_principal) references tb_parte(id_parte));
+
+
+insert into tb_parte 
+
+values
+(1, 'Mesa e Cadeiras', NULL),
+(2, 'Cadeira', 1),
+(3, 'Mesa', 1);
+
+
+select p1.descricao as "Combinaçao",
+	p2.descricao as "Partes"
+from tb_parte p1, tb_parte p2
+where p1.id_parte = p2.id_parte_principal;
+
+select nome, sobrenome
+from tb_cliente
+where sobrenome similar to '%(Matheus|Mendes)%';
+
+select  nome, sobrenome
+from tb_cliente
+where nome similar to '(A|S)%';
+
+
+select count(case when preco_venda between 0.01 and 5.00 then 1 else null end) as "Muito Baixo",
+	count(case when preco_venda between 5.01 and 10.00 then 1 else null end) as "Baixo",
+	count(case when preco_venda between 10.01 and 20.00 then 1 else null end) as "Medio",
+	count(case when preco_venda between 20.01 and 30.00 then 1 else null end) as "Alto"
+from tb_item;
+
+
+select 
+(select MIN(preco_venda) from tb_item) as Menor,
+(select MAX(preco_venda) from tb_item) as Maior,
+(select AVG(preco_venda) from tb_item) as Media;
