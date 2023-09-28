@@ -676,3 +676,13 @@ select
 (select MIN(preco_venda) from tb_item) as Menor,
 (select MAX(preco_venda) from tb_item) as Maior,
 (select AVG(preco_venda) from tb_item) as Media;
+
+
+select MIN(preco_venda) "Menor",
+		MAX(preco_venda) "Maior",
+		AVG(preco_venda) "Media"
+from tb_item;
+
+
+create tablespace tablespace_01
+location 'C://tablespace_postgresql';
