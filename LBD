@@ -698,3 +698,28 @@ values
 
 select *
 from tb_teste_tablespace;
+//////////////////////////////////////////////////////////////////////////////
+create table tb_teste_tipo(
+	um_smallint		SMALLINT,
+	um_int			INTEGER,
+	um_float		FLOAT,
+	um_real			REAL,
+	um_numeric		NUMERIC(5,2)
+);
+
+
+insert into tb_teste_tipo
+values
+(2, 2, 2.0, 2.0, 2.0),
+(-100, -100, 123.456789, 123.456789, 123.456789),
+(-32768, -123456789, 1.23456789, 1.23456789, 1.23456789),
+(-32768, -123456789, 123456789.1234567890, 123456789.123456789, 123.123456789);
+
+insert into tb_teste_tipo
+values
+(-32768, -123456789, 123456789.123456789, 23456789.123456789, 123456789.123456789);
+
+create table tb_funcionario_2(
+	cod_referencia		CHAR(5),
+	dias_uteis			INT[]
+);
