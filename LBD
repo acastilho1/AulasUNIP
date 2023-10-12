@@ -723,3 +723,233 @@ create table tb_funcionario_2(
 	cod_referencia		CHAR(5),
 	dias_uteis			INT[]
 );
+
+
+insert into tb_funcionario_2 
+VALUES('val01', '{0,1,0,1,1,1,1}');
+
+insert into tb_funcionario_2 
+values('val02', '{0,1,1,1,1,0,1}');
+
+select *
+from tb_funcionario_2;
+
+select dias_uteis[2]
+from tb_funcionario_2
+where cod_referencia = 'val02';
+
+drop table tb_funcionario_2;
+
+create table tb_funcionario_2(
+	cod_referencia		CHAR(5),
+	dias_uteis			INT ARRAY[7]
+);
+
+
+select CAST(dt_entrega as CHAR(10))
+from tb_pedido;
+
+
+select preco_venda, preco_venda::INTEGER as "Guia de Preço"
+from tb_item 
+where preco_venda > 5.00;
+
+select ds_item,
+	SUBSTR(ds_item, 3, 5),
+	preco_venda,
+	ROUND(preco_venda, 1)
+from tb_item;
+
+select trim('0' from '000Teste da Função TRIM000');
+
+select trim(' Teste da Função  ');
+
+select STRPOS('Teste de Função TRIM', 'e');
+
+select ABS(-12345.67);
+
+
+select i.id_item,
+	   i.ds_item,
+	   e.quantidade,
+	   CURRENT_TIMESTAMP
+from tb_item i
+join tb_estoque e ON(i.id_item = e.id_item);
+
+select current_user,
+	   current_time;
+	   
+	  
+	  
+select oid, nome, sobrenome
+from tb_cliente;
+
+
+create table tb_teste_oid(
+	col_a 		INTEGER,
+	col_b		INTEGER) without OIDS;
+	
+insert into tb_teste_oid 
+values
+(generate_series(1, 100),
+ generate_series(100,200));
+
+select oid, col_a, col_b
+from tb_teste_oid;
+
+
+show all;
+
+create table tb_teste_restricoes(
+	COL_NOTNULL			INT not null,
+	COL_UNIQUE			INT unique,
+	COL_PK				INT primary key,
+	COL_DEFAULT			INT default 42,
+	COL_CHECK 			INT CHECK(col_check < 42)
+);
+
+insert into tb_teste_restricoes(COL_NOTNULL, COL_UNIQUE, COL_PK, COL_DEFAULT, COL_CHECK)
+values 
+(1,1,1,1,1),
+(2,2,2,2,2);
+
+
+insert into tb_teste_restricoes(COL_NOTNULL, COL_UNIQUE, COL_PK, COL_DEFAULT, COL_CHECK)
+values 
+(2,2,2,2,2);
+
+
+
+//Erro SQL [23505]: ERROR: duplicate key value violates unique constraint "tb_teste_restricoes_pkey"
+//  Detalhe: Key (col_pk)=(2) already exists.
+
+
+
+
+insert into tb_teste_restricoes(COL_NOTNULL, COL_UNIQUE, COL_PK, COL_DEFAULT, COL_CHECK)
+values 
+(1,null,98,1,1),
+(1,null,99,1,1);
+
+insert into tb_teste_restricoes(COL_NOTNULL, COL_UNIQUE, COL_PK, COL_DEFAULT, COL_CHECK)
+values 
+(2,2,9,2,2);
+
+//Erro SQL [23505]: ERROR: duplicate key value violates unique constraint "tb_teste_restricoes_col_unique_key"
+//Detalhe: Key (col_unique)=(2) already exists.
+
+
+insert into tb_teste_restricoes(COL_NOTNULL, COL_UNIQUE, COL_PK, COL_DEFAULT, COL_CHECK)
+values 
+(3,3,3,3,100);
+
+//Erro SQL [23514]: ERROR: new row for relation "tb_teste_restricoes" violates check constraint "tb_teste_restricoes_col_check_check"
+//Detalhe: Failing row contains (3, 3, 3, 3, 100).
+
+insert into tb_teste_restricoes(COL_NOTNULL, COL_UNIQUE, COL_PK, COL_CHECK)
+values 
+(3,3,3,41);
+
+
+drop table tb_teste_restriçoes;
+
+create table tb_teste_restricoes(
+	chave1			INTEGER,
+	chave2			INTEGER,
+	mystring		VARCHAR(15),
+	constraint cs1 CHECK(mystring <> ''),
+	constraint cs2 primary KEY(chave1, chave2)
+);
+
+insert into tb_teste_restricoes 
+values
+(1,1,'OLA'),
+(1,2,'Tchau');
+
+insert into tb_teste_restricoes 
+values
+(1,2,'');
+
+//Erro SQL [23514]: ERROR: new row for relation "tb_teste_restricoes" violates check constraint "cs1"
+//Detalhe: Failing row contains (1, 2, ).
+
+
+
+alter table tb_teste_restricoes
+add column mydate DATE;
+
+select *
+from tb_teste_restricoes;
+
+alter table tb_teste_restricoes 
+rename column mydate to dt_nascimento;
+
+alter table tb_teste_restricoes
+drop constraint cs1;
+
+alter table tb_teste_restricoes
+add constraint cs3 unique(dt_nascimento);
+
+alter table tb_teste_restricoes
+alter column mystring set default 'Ok';
+
+alter table tb_teste_restricoes
+alter dt_nascimento type VARCHAR(32);
+
+alter table tb_teste_restricoes
+rename to tb_teste_restricoes_2;
+
+drop table tb_teste_restricoes_2;
+
+create temporary table tb_teste_restricoes(
+	chave1		INTEGER,
+	chave2 		INTEGER,
+	mystring	VARCHAR(15),
+	constraint cs1 CHECK(mystring <> ''),
+	constraint cs2 primary KEY(chave1, chave2)
+);
+
+insert into tb_teste_restricoes 
+values
+(1,1,'OLA'),
+(1,2,'Tchau');
+
+select *
+from tb_teste_restricoes;
+
+create table tb_cidades(
+	nome		text,
+	populacao	FLOAT,
+	altitude	INT
+);
+
+create table tb_capitais(
+	uf 			CHAR(2)
+) inherits (tb_cidades);
+
+select *
+from tb_capitais;
+
+alter table tb_cidades
+drop column nome;
+
+drop table tb_cidades;
+
+drop table tb_capitais;
+
+
+create table tb_cidades(
+	nome 		text,
+	populacao	FLOAT,
+	altitude	INT
+);
+
+create table tb_capitais(
+	uf			CHAR(2),
+	like tb_cidades
+);
+
+
+select i.ds_item, e.quantidade
+from tb_item i
+join tb_estoque e on (i.id_item = e.id_item);
