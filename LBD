@@ -1025,3 +1025,28 @@ where id_cliente in (select id_cliente
 					from tb_dados_duplicados
 					group by id_cliente
 					having COUNT(*) > 1);
+delete
+from tb_dados_duplicados
+where id_cliente = 4
+and sobrenome = 'Hall';
+
+create table tb_novo_cliente
+as
+select id_cliente
+from tb_dados_duplicados
+
+insert into tb_novo_cliente 
+values(4);
+
+select *
+from tb_novo_cliente;
+
+begin;
+lock table tb_novo_cliente in row exclusive mode;
+	delete from tb_novo_cliente
+	where ctid not in (select min(ctid)
+					  from tb_novo_cliente
+					  where id_cliente in (1,2,3,4)
+					  group by id_cliente);
+commit;
+					  
