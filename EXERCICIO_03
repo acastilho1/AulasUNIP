@@ -1,0 +1,73 @@
+create table tb_empregado(
+	idEmpregado			INTEGER,
+	idDepartamento		INTEGER,
+	nomeEmpregado		VARCHAR(200),
+	numeroDependente	INTEGER,
+	salario				NUMERIC(7,2),
+	constraint pk_empregado_idEmpregado primary KEY(idEmpregado),
+	constraint fk_empregado_idDepartamento foreign key(idDepartamento)
+		references tb_departamento(idDepartamento));
+		
+create table tb_departamento(
+	idDepartamento		INTEGER,
+	nomeDepartamento	VARCHAR(200),
+	constraint pk_departamento_idDepartamento primary key(idDepartamento));
+
+create table tb_ferias(
+	idEmpregado			INTEGER,
+	ano					INTEGER,
+	mes					INTEGER,
+	constraint fk_ferias_idEmpregado foreign key(idEmpregado)
+		references tb_empregado(idEmpregado));
+		
+create table tb_empregado_projeto(
+	idEmpregado			INTEGER,
+	idProjeto			INTEGER,
+	constraint fk_empProjeto_idEmpregado foreign key(idEmpregado)
+		references tb_empregado(idEmpregado),
+	constraint fk_empProjeto_idProjeto foreign key(idProjeto)
+		References tb_projeto(idProjeto));
+		
+	
+create table tb_projeto(
+	idProjeto			INTEGER,
+	nomeProjeto			VARCHAR(200),
+	constraint pk_projeto_idProjeto primary key(idProjeto));
+
+	
+select nomeEmpregado
+from tb_empregado ep
+inner join tb_departamento as dep on ep.idDepartamento = dep.idDepartamento
+where dep.idDepartamento > 200;
+
+select nomeEmpregado
+from tb_empregado ep
+join tb_departamento as dep on ep.idDepartamento = dep.idDepartamento
+where dep.idDepartamento = 200
+and ep.idDepartamento not IN(
+	select idEmpregado
+	from tb_ferias as fe
+	where fe.ano = 2019
+);
+
+select COUNT(idEmpregado) as qtdEmpregado, avg(salario) as mediaSalarial
+from tb_empregado;
+
+
+
+select idEmpregado, nomeEmpregado
+from tb_empregado 
+where (select avg(salario) from tb_empregado) < salario
+and numeroDependente > 2;
+
+select pj.nomeProjeto, emp.nomeEmpregado
+from tb_projeto as pj
+inner join tb_empregado as emp on pj.idEmpregado = emp.idEmpregado
+where emp.nomeEmpregado is not null
+order by pj.nomeProjeto, emp.nomeEmpregado;
+
+insert into tb_departamento(idDepartamento, nomeDepartamento)
+values
+(500, 'Vendas');
+
+
