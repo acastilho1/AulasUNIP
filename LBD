@@ -1050,3 +1050,62 @@ lock table tb_novo_cliente in row exclusive mode;
 					  group by id_cliente);
 commit;
 					  
+////////////////////////////////////////////////////////////////////////////////////////////
+create table tb_produtos(
+id_produto			Int not null primary key,
+produto_codigo		VARCHAR(20),
+produto_nome		VARCHAR(60),
+produto_valor		real,
+produto_situacao	VARCHAR(1)DEFAULT'A',
+data_criacao		timestamp,
+data_atualizacao		timestamp
+);
+
+
+
+alter table tb_produtos
+add column	produtos_categorias text[];
+
+
+alter table tb_produtos
+add column produto_estoque json;
+
+
+insert into tb_produtos
+values
+(99, '6234', 'COCA-COLA', 6, 'A', '01/01/2023', '01/01/2023',
+	'{"REFRIGERANTE", "LATA", "BEDIDA","COLA"}',
+	'{"info_estoque":
+	{"tem_estoque":"SIM",
+	"quantidade":17,
+	"ultima_compra":"01/01/2023"}
+	}'
+	);
+	
+drop table tb_produtos;
+
+select produto_estoque -> 'info_estoque'
+	as "Retornando um JSON"
+from tb_produtos 
+where produto_nome like 'COCA-COLA';
+
+
+copy(select *
+from tb_cliente)
+to 'c:/temp/cliente-18-10-23.csv'
+with
+	delimiter ';';
+
+copy(select *
+from tb_cliente)
+to 'c:/temp/cliente-25-10-23.csv'
+	with 
+		csv
+			quote as';';
+
+
+copy(select *
+from tb_cliente)
+to 'c:/temp/cliente-26-10-23.txt'
+with
+	delimiter ';';
