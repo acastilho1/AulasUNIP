@@ -1109,3 +1109,214 @@ from tb_cliente)
 to 'c:/temp/cliente-26-10-23.txt'
 with
 	delimiter ';';
+
+copy(select *
+from tb_cliente)
+to 'c:/temp/cliente-18-10-23.csv'
+with
+	delimiter ';';
+
+copy(select *
+from tb_cliente)
+to 'c:/temp/cliente-25-10-23.csv'
+	with 
+		csv
+			quote as';';
+
+
+copy(select *
+from tb_cliente)
+to 'c:/temp/cliente-26-10-23.txt'
+with
+	delimiter ';';
+	
+create or replace function fn_tx_venda(real)
+returns real as 
+$$
+declare 
+	v_subtotal alias for $1;
+begin
+	return v_subtotal *0.06;
+end
+$$
+language plpgsql;
+
+select fn_tx_venda(9.87);
+
+create or replace function fn_tx_venda(p_subtotal real)
+	returns real as 
+$$
+begin 
+	return p_subtotal*0.06;
+end
+$$
+language plpgsql;
+
+select fn_tx_venda(12);
+
+create or replace function fn_variaveis(integer, varchar)
+	returns varchar as 
+$$
+begin 
+	return 'Variáveis de retorno: ' || $1 || $2;
+end
+$$
+language plpgsql;
+end
+
+select fn_variaveis(10, '-LBD') "RETORNO DA FUNCTION";
+
+create or replace function fn_tipo_coluna(integer)
+	returns varchar as 
+$$
+declare
+	v_nome tb_cliente.nome%type;
+begin
+	select nome into v_nome
+	from tb_cliente
+	where id_cliente = $1;
+
+	return 'Nome do cliente' || v_nome;
+end
+$$
+language plpgsql;
+
+select fn_tipo_coluna(10);
+
+create or replace function fn_tipo_tupla(integer)
+returns varchar as
+$$
+declare 
+	v_tupla tb_cliente%ROWTYPE;
+begin
+	select * into v_tupla
+	from tb_cliente
+	where id_cliente = $1;
+	
+	return 'Tupla(linha):' || v_tupla;
+end
+$$
+language plpgsql;
+
+
+
+create or replace function fn_cliente(tb_cliente.id_cliente%TYPE)
+	returns text as
+$$
+declare
+	v_linha RECORD;
+begin
+	select * into v_linha
+	from tb_cliente
+	where id_cliente = $1;
+	
+	if not found then
+		raise exception 'Cliente % não encontrado', $1;
+	else
+		return 'Cliente encontrado';
+	end if;
+end
+$$
+language plpgsql;
+end
+
+
+
+select fn_cliente(10);
+
+
+create table tb_log(
+	nome			VARCHAR(30),
+	data_hora		TIMESTAMP
+);
+
+
+create or replace function fn_log(p_nome varchar)
+	returns timestamp as 
+$$
+begin 
+	insert into tb_log
+	values(p_nome, now());
+	
+	return now();
+end
+$$
+language plpgsql;
+
+
+select fn_log('Geraldo');
+
+select *
+from tb_log;
+
+create or replace function fn_loop_basico()
+	returns void as
+$$
+declare 
+	v_contador INTEGER;
+begin
+	v_contador := 0;
+	loop
+		v_contador := v_contador + 1;
+		raise notice 'Contador eh:%', v_contador;
+		exit when v_contador >= 1000;
+	end loop;
+return;
+end;
+$$
+language plpgsql;
+
+select fn_loop_basico();
+
+
+create sequence sq_categoria;
+
+create table tb_categoria(
+	id_categoria		INTEGER,
+	ds_categoria		VARCHAR(40) not null,
+	fg_ativo			INTEGER not null,
+	primary KEY(id_categoria));
+
+
+create or replace function fn_categoria(p_id_categoria integer,
+										p_descricao varchar,
+										p_flag		integer,
+										p_opcao		char)
+										
+returns integer as
+$$
+declare
+	v_id_categoria tb_categoria.id_categoria%type;
+begin
+	if p_opçao = 'I' then
+		select nextval('sq_categoria') into v_id_categoria;
+	
+		insert into tb_categoria(id_categoria,
+								ds_categoria,
+								fg_ativo)
+		values(v_id_categoria, p_descricao, p_flag);
+		
+		return v_id_categoria;
+
+	elsif p_opcao = 'U' then
+		update tb_categoria 
+		set ds_categoria = p_descricao
+		where id_categoria = p_id_categoria;
+	
+		return p_id_categoria;
+	
+	elsif p_opcao = 'D' then
+		delete 
+		from tb_categoria
+		where id_categoria = p_id_categoria;
+	
+		return 0;
+	else
+		return -1;
+	end if;
+	exception
+		when others then
+		return -1;
+end;
+$$
+language plpgsql;
