@@ -1320,3 +1320,48 @@ begin
 end;
 $$
 language plpgsql;
+
+
+
+create or replace function fn_categoria(p_id_categoria integer,
+                                        p_descricao varchar,
+                                        p_flag integer,
+                                        p_opcao char)
+returns integer as 
+$$
+declare 
+   v_id_categoria tb_categoria.id_categoria%type;
+begin
+	if p_opcao = 'I' then
+	  	select nextval('sq_categoria') into v_id_categoria;
+	 
+	 	insert into tb_categoria(id_categoria,
+	                         	 ds_categoria,
+	                         	 fg_ativo)
+     	values(v_id_categoria, p_descricao, p_flag);
+    
+    return v_id_categoria;
+   
+   elsif p_opcao = 'U' then
+	    update tb_categoria
+	    set ds_categoria = p_descricao
+	    where id_categoria = p_id_categoria;
+	   
+   return p_id_categoria;
+  
+  elsif p_opcao = 'D' then
+	  delete 
+	  from tb_categoria 
+	  where id_categoria = p_id_categoria;
+	 
+ 	return 0;
+ else
+ 	return -1;
+ end if;
+	 exception 
+	   when others then
+	   return -1;
+	
+end;
+$$
+language plpgsql;
