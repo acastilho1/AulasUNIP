@@ -1365,3 +1365,212 @@ begin
 end;
 $$
 language plpgsql;
+--------------------------------------------------------------------------------------------
+
+create or replace function fn_km_to_milhas(float)
+	returns float as 
+'
+	select $1*0.62
+'
+	language sql;
+
+select fn_km_to_milhas(132) as milhas;
+
+
+CREATE TABLE tb_produtos (
+  codigo          INTEGER,
+  ds_produto      VARCHAR(60) ,
+  unidade         CHAR(2) ,
+  estoque         INTEGER ,
+  preco_compra    DECIMAL(7,2),  
+  preco_venda     DECIMAL(7,2),
+  PRIMARY KEY(codigo)
+);
+
+CREATE TABLE tb_clientes (
+  codigo          INTEGER,
+  nm_cliente      VARCHAR(60),
+  cidade          VARCHAR(40),
+  dt_nascimento   DATE,
+  PRIMARY KEY(codigo)
+);
+
+CREATE TABLE tb_compras (
+  ref_produtos    INTEGER,
+  ref_clientes    INTEGER,
+  quantidade      INTEGER,
+  dt_compra       DATE,
+  preco           DECIMAL(7,2),
+  PRIMARY KEY(ref_produtos, ref_clientes),
+  FOREIGN KEY(ref_produtos) REFERENCES tb_produtos(codigo),
+  FOREIGN KEY(ref_clientes) REFERENCES tb_clientes(codigo)
+);
+
+INSERT INTO tb_produtos (CODIGO, ds_produto, UNIDADE, ESTOQUE, PRECO_COMPRA, PRECO_VENDA)
+VALUES
+(2, 'SABAO', 'LT', 50, 3.90, 6.00),
+(3, 'REFRIGERANTE', 'LT', 900, 3.10, 4.55),
+(4, 'BALA FLOPI', 'PC', 1400, 2.30, 3.00),
+(5, 'SORVETE', 'LT', 400, 4.90, 5.30),
+(6, 'SUCO EM PO', 'PC', 200, 2.95, 3.95);
+
+
+INSERT INTO tb_clientes (CODIGO, nm_cliente, CIDADE, dt_nascimento)
+VALUES
+(1, 'MARCELO NUNES DA SILVA', 'RIBEIRÃO PRETO', '26/02/2000'),
+(2, 'CESAR DOMINGUES', 'SERTÃOZINHO', '13/10/1988'),
+(10, 'MOACIR DE CARVALHO', 'CRAVINHOS', '20/06/1986'),
+(4, 'JOÃO ALEX MEDEIROS', 'FLORIANÓPOLIS', '29/03/1982'),
+(5, 'DANIEL AFONSO MENDES', 'SANTA CLARA', '23/12/2003');
+
+
+INSERT INTO tb_compras (REF_CLIENTES, REF_PRODUTOS, QUANTIDADE, dt_compra, PRECO)
+VALUES
+(2, 2, 2, '31/10/2022', 12.00),
+(1, 3, 42, '31/10/2022', 191.10),
+(1, 4, 7, '31/10/2022', 12.00),
+(1, 5, 7, '31/10/2022', 15.00),
+(1, 6, 3, '31/10/2022', 11.85);
+
+SELECT *
+FROM tb_clientes;
+
+SELECT *
+FROM tb_produtos;
+
+SELECT *
+FROM tb_compras;
+
+
+create or replace function fn_maior_25()
+	returns setof tb_clientes as 
+'
+	select *
+	from tb_clientes
+	where date_part(''YEAR'', AGE(dt_nascimento))>25;
+'
+language sql;
+
+select codigo,
+	   nm_cliente,
+	   cidade,
+	   DATE_PART('YEAR', AGE(dt_nascimento))
+from fn_maior_25();
+
+
+create or replace function fn_get_clientes(integer)
+returns varchar as 
+'
+	select nm_cliente
+	from tb_clientes
+	where codigo = $1;
+'
+language sql;
+
+create or replace function fn_get_produtos(integer)
+returns varchar as 
+' 
+	select ds_produto
+	from tb_produtos
+	where codigo = $1;
+'
+language sql;
+
+select ref_clientes,
+	   fn_get_clientes(ref_clientes),
+	   quantidade,
+	   preco,
+	   ref_produtos,
+	   fn_get_produtos(ref_produtos)
+from tb_compras;
+
+create table tb_empregados(
+	nome 			varchar 	not null,
+	salario			NUMERIC);
+
+create table tb_empregados_auditoria(
+	operacao		CHAR		not null,
+	usuario			VARCHAR		not null,
+	dt_hr			TIMESTAMP	not null,
+	nome 			VARCHAR		not null,
+	salario			NUMERIC);
+
+create or replace function fn_empregado_auditoria() 
+	returns trigger as
+$$
+begin 
+	if(tg_op = 'DELETE') then
+		insert into tb_empregados_auditoria
+			select 'E', user, now(), old.*;
+		return old;
+	
+	elsif(tg_op = 'UPDATE') then 
+		insert into tb_empregados_auditoria
+			select 'A', user, now(), new.*;
+		return new;
+	
+	elsif(tg_op = 'INSERT') then
+		insert into tb_empregados_auditoria
+			select 'I', user, now(), new.*;
+		return new;
+	end if;
+	return null;
+end;
+$$
+language plpgsql;
+
+create trigger tg_empregado_auditoria
+after insert or update or delete on tb_empregados
+for each row execute procedure fn_empregado_auditoria();
+
+insert into tb_empregados(nome, salario)
+values
+('João', 1500.98),
+('Pedro', 3452.76),
+('Marta', 3745.65);
+
+select *
+from tb_empregados_auditoria;
+
+update tb_empregados
+	set salario = 2500.55
+	where nome = 'Marta';
+	
+delete 
+from tb_empregados
+where nome = 'João';
+
+select *
+from tb_empregados_auditoria;
+
+
+--Criar uma funçao para exibir o nome, salario e cargo
+-- de u determinado funcionario
+--o ID do funcionario deversa ser passado como parametro
+-- de entrada(modo IN) da funçao
+
+create or replace function fn_get_clientes(p_id integer)
+returns varchar as
+$$
+declare 
+	v_nome		tb_funcionario.nm_funcionario%type;
+	v_salario 	tb_funcionario.salario%type;
+	v_cargo		tb_funcionario.cargo%type;
+begin 
+	select nm_funcionario, salario, cargo
+	into v_nome, v_salario, v_cargo
+	from tb_funcionario
+	where id_funcionario = p_id;
+
+	if (v_nome is not null) then 
+		return 'Nome: '|| v_nome||
+		   'Salario' || v_salario ||
+		   'Cargo'  || v_cargo;	
+	else 
+		return 'O ID' || p_id || 'Nao existe';
+	end if
+	
+	
+end;
+$$
+language plpgsql;
